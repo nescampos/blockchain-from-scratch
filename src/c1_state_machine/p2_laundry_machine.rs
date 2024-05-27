@@ -46,21 +46,33 @@ impl StateMachine for ClothesMachine {
                 if new_life == 0 {
                     return ClothesState::Tattered;
                 }
-                return ClothesState::Dirty(new_life);
+                match t {
+                    ClothesAction::Wear => ClothesState::Dirty(new_life),
+                    ClothesAction::Wash => ClothesState::Wet(new_life),
+                    _ => ClothesState::Clean(new_life)
+                }
             },
             ClothesState::Dirty(life) => {
                 let new_life = life - 1;
                 if new_life == 0 {
                     return ClothesState::Tattered;
                 }
-                return ClothesState::Dirty(new_life);
+                match t {
+                    ClothesAction::Dry => ClothesState::Dirty(new_life),
+                    ClothesAction::Wash => ClothesState::Wet(new_life),
+                    _ => ClothesState::Dirty(new_life)
+                }
             },
             ClothesState::Wet(life) => {
                 let new_life = life - 1;
                 if new_life == 0 {
                     return ClothesState::Tattered;
                 }
-                return ClothesState::Dirty(new_life);
+                match t {
+                    ClothesAction::Dry => ClothesState::Clean(new_life),
+                    ClothesAction::Wash => ClothesState::Wet(new_life),
+                    _ => ClothesState::Dirty(new_life)
+                }
             },
             ClothesState::Tattered => ClothesState::Tattered,
         }
